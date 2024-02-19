@@ -1,11 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset Data</title>
+    <link rel="stylesheet" href="/HW(5.3-5.6)/public/bootstrap.css">
+    <script src="/HW(5.3-5.6)/public/boostrap.bundle.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
+
 <body>
     
+
+    <div class="container">
+
+        <div class="d-flex align-items-end flex-column mb-3">
+            <button class="btn btn-danger mt-3 fw-bold" id="nextpage">Sign Out</button>
+            <button class="btn btn-info mt-3 text-dark fw-bold" id="generateQR">QR code</button>
+        </div>
+
+        <h1>Asset List</h1>
+        <table class="table table-striped table-bordered">
+            <thead class="table">
+                <tr>
+                    <th>Choose</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+
+        <div>
+            <div id="qrcodes"></div> <!-- Container for QR codes -->
+            <div id="qrID"></div>
+        </div>
+    </div>
+
+    <script>
+        const assets = [
+            { "id": 662500200564001, "name": "laptop", "status": 1 },
+            { "id": 673000100364002, "name": "projector", "status": 0 },
+            { "id": 744001200561020, "name": "UPS", "status": 0 }
+        ];
+
+        function readUser() {
+            let data = '';
+            assets.forEach(function (asset) {
+                asset.status = (asset.status == 1) ? 'Normal' : 'Lost'; // Update status
+                data += `<tr>`;
+                data += `<td><input type="checkbox" data-id="${asset.id}"></td>`;
+                data += `<td>${asset.id}</td>`;
+                data += `<td>${asset.name}</td>`;
+                data += `<td>${asset.status}</td>`;
+                data += `</tr>`;
+            });
+            document.getElementById('tbody').innerHTML = data;
+        }
+
+        readUser();
+
+        document.querySelector("#nextpage").onclick = function () {
+            window.location.assign('login.html');
+        }
+
+        document.querySelector("#generateQR").onclick = function () {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            const selectedAssets = Array.from(checkboxes).map(checkbox => {
+                const assetId = parseInt(checkbox.getAttribute('data-id'));
+                return assets.find(asset => asset.id === assetId);
+            });
+
+            const qrCodeContainer = document.getElementById('qrcodes'); // Get the container for QR codes
+            qrCodeContainer.innerHTML = ''; // Clear previous QR codes
+
+            selectedAssets.forEach(asset => {
+                const qrCodeDiv = document.createElement('div');
+                new QRCode(qrCodeDiv, {
+                    text: `Asset ID: ${asset.id}, Name: ${asset.name}, Status: ${asset.status}`,
+                    width: 128,
+                    height: 128,
+                });
+                qrCodeContainer.appendChild(qrCodeDiv); // Append QR code to the container
+
+                const label = document.createElement('p');
+                label.textContent = asset.id;
+                qrCodeContainer.appendChild(label);
+            });
+        };
+    </script>
 </body>
 </html>
