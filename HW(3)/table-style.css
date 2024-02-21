@@ -1,0 +1,19 @@
+table, th,td{
+    border: 1px solid black;
+    font-size: small;
+}
+
+th,td{
+    padding: 3px;
+}
+
+th{
+    background-color: black;
+    color: white;
+}
+
+table{
+    margin: 2px;
+}
+td{
+}
